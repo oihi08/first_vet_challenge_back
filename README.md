@@ -1,4 +1,4 @@
-# Project Name
+# FirstVet challenge (Back)
 
 This is the backend code of FirstVet's technical challenge, written in PHP with Laravel. Here we have different functions to obtain a list of available schedules for a veterinarians.
 
