@@ -7,10 +7,21 @@ This is the backend code of FirstVet's technical challenge, written in PHP with 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
  1. Clone the repository.
    ```sh
    git clone https://github.com/oihi08/first_vet_challenge_back.git
+   ```
+ 2. Install dependencies using Composer.
+  ```sh
+   composer install
+   ```
+3. Create a copy of the .env.example file and rename it to .env.
+
+## usage
+1. Start the development server.
+  ```sh
+   php artisan serve
+   ```
+## configuration
