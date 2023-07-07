@@ -2,6 +2,8 @@
 
 This is the backend code of FirstVet's technical challenge, written in PHP with Laravel. Here we have different functions to obtain a list of available schedules for a veterinarians.
 
+Visit https://firstvetbackend-30011751fb5b.herokuapp.com/api/schedule to see the result!
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
