@@ -69,6 +69,7 @@ final class VetScheduleService
             $timeSlotEnd = $endSlot;
             $startbreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$item['startBreak']);
             $endBreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$item['endBreak']);
+
             $slotIsInBreak = ($timeSlotStart->gte($startbreakSlot) && $timeSlotStart->lt($endBreakSlot)) ||
             ($timeSlotEnd->gt($startbreakSlot) && $timeSlotEnd->lte($endBreakSlot)) ||
             ($timeSlotStart->lte($startbreakSlot) && $timeSlotEnd->gte($endBreakSlot));
@@ -114,6 +115,8 @@ final class VetScheduleService
                         'timeStart' => $roundedTime->format('H:i'),
                         'timeFinish' => $roundedTime->clone()->addMinutes(15)->format('H:i'),
                         'name' => $schedule->employeeName,
+                        'id' => $schedule->employeeId,
+                        'scheduleId' => $schedule->scheduleId,
                     ];
             }
             $current = $current->clone()->addMinutes(15);
