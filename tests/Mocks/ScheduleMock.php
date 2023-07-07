@@ -24,6 +24,23 @@ class ScheduleMock
                 'employeeId' => 4714,
                 'employeeName' => 'Oihane',
             ],
+            (object) [
+                'scheduleId' => 4713,
+                'startDate' => '2020-04-29',
+                'startTime' => '06:31:00',
+                'endDate' => '2020-04-29',
+                'endTime' => '18:42:00',
+                'startBreak' => '10:08:00',
+                'endBreak' => '10:26:00',
+                'startBreak2' => '12:12:00',
+                'endBreak2' => '12:31:00',
+                'startBreak3' => '15:20:00',
+                'endBreak3' => '16:25:00',
+                'startBreak4' => '00:00:00',
+                'endBreak4' => '00:00:00',
+                'employeeId' => 4714,
+                'employeeName' => 'Fred',
+            ],
         ];
     }
 }

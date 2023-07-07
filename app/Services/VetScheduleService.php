@@ -30,21 +30,29 @@ final class VetScheduleService
      *
      * @return array array of breaks with start and end time
      */
-    public function extractBreaksFromSchedule($schedule)
+    public function extractBreaksFromSchedule(object $schedule)
     {
-        $breakTimes = [];
-
-        $properties = get_object_vars($schedule);
-        $keys = array_keys($properties);
-        $filteredKeys = array_values(array_filter($keys, function ($key) {
+        $propertykeys = array_keys(get_object_vars($schedule));
+        $filteredKeys = array_values(array_filter($propertykeys, function ($key) {
             return stripos($key, 'startbreak') !== false;
         }));
-        foreach ($filteredKeys as $i => $item) {
+
+        if (empty($filteredKeys)) {
+            return []; // No breaks found, return an empty array
+        }
+
+        $breakTimes = [];
+
+        foreach ($filteredKeys as $index => $item) {
             $startBreak = $schedule->$item;
-            $dynamicKey = 'endBreak'.($i === 0 ? '' : (int) $i + 1);
+            $dynamicKey = 'endBreak'.($index === 0 ? '' : (int) $index + 1);
             $endBreak = $schedule->{$dynamicKey};
+
             if ($startBreak !== '00:00:00') {
-                $breakTimes[] = ['startBreak' => substr($startBreak, 0, -3), 'endBreak' => substr($endBreak, 0, -3)];
+                $breakTimes[] = [
+                    'startBreak' => substr($startBreak, 0, -3),
+                    'endBreak' => substr($endBreak, 0, -3),
+                ];
             }
         }
 
@@ -61,24 +69,21 @@ final class VetScheduleService
      *
      * @return bool true if the time slot is inside a break slot, otherwise false
      */
-    public function isInBreak($startSlot, $endSlot, $currentDate, $breaks)
+    public function isInBreak($startSlot, $endSlot, $currentDate, array $breaks)
     {
-        $isInBreak = false;
-        foreach ($breaks as $item) {
-            $timeSlotStart = $startSlot;
-            $timeSlotEnd = $endSlot;
-            $startbreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$item['startBreak']);
-            $endBreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$item['endBreak']);
+        foreach ($breaks as $break) {
+            $startbreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$break['startBreak']);
+            $endBreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$break['endBreak']);
 
-            $slotIsInBreak = ($timeSlotStart->gte($startbreakSlot) && $timeSlotStart->lt($endBreakSlot)) ||
-            ($timeSlotEnd->gt($startbreakSlot) && $timeSlotEnd->lte($endBreakSlot)) ||
-            ($timeSlotStart->lte($startbreakSlot) && $timeSlotEnd->gte($endBreakSlot));
+            $slotIsInBreak = ($startSlot->gte($startbreakSlot) && $startSlot->lt($endBreakSlot)) ||
+            ($endSlot->gt($startbreakSlot) && $endSlot->lte($endBreakSlot)) ||
+            ($startSlot->lte($startbreakSlot) && $endSlot->gte($endBreakSlot));
             if ($slotIsInBreak) {
                 return true;
             }
         }
 
-        return $isInBreak;
+        return false;
     }
 
     /**
@@ -89,40 +94,53 @@ final class VetScheduleService
      *
      * @return array array with available slots of time
      */
-    public function getVetsAvailableIntervals($schedule)
+    public function getVetsAvailableIntervals(object $schedule)
     {
         $startString = substr($schedule->startDate.' '.$schedule->startTime, 0, -3);
         $endString = substr($schedule->endDate.' '.$schedule->endTime, 0, -3);
         $breakTimes = $this->extractBreaksFromSchedule($schedule);
         $start = Carbon::createFromFormat('Y-m-d H:i', $startString);
         $end = Carbon::createFromFormat('Y-m-d H:i', $endString)->subMinutes(15);
+        $formattedStartDate = Carbon::createFromFormat('Y-m-d', $schedule->startDate)->toDateString();
 
         $intervals = [];
         $current = $start->clone();
+
         while ($current <= $end) {
             $roundedTime = $this->roundTimeToNextQuarter($current);
-            // $roundedTime = $current;
             $slotIsInBreak = $this->isInBreak(
                 $roundedTime,
                 $roundedTime->clone()->addMinutes(15),
-                Carbon::createFromFormat('Y-m-d', $schedule->startDate)->toDateString(),
+                $formattedStartDate,
                 $breakTimes
             );
-            if ($slotIsInBreak == false) {
-                $intervals[] =
-                    [
-                        'date' => $roundedTime->format('Y-m-d'),
-                        'timeStart' => $roundedTime->format('H:i'),
-                        'timeFinish' => $roundedTime->clone()->addMinutes(15)->format('H:i'),
-                        'name' => $schedule->employeeName,
-                        'id' => $schedule->employeeId,
-                        'scheduleId' => $schedule->scheduleId,
-                    ];
+            if (!$slotIsInBreak) {
+                $intervals[] = $this->createIntervalData($roundedTime, $schedule);
             }
             $current = $current->clone()->addMinutes(15);
         }
 
         return $intervals;
+    }
+
+    /**
+     * Create interval data of available dates of vets.
+     *
+     * @param Carbon $startSlotTime start time of the time slot
+     * @param object $schedule      vet's schedule data
+     *
+     * @return object object with necessary information for the inverval
+     */
+    public function createIntervalData(Carbon $startSlotTime, object $schedule)
+    {
+        return (object) [
+            'date' => $startSlotTime->format('Y-m-d'),
+            'timeStart' => $startSlotTime->format('H:i'),
+            'timeFinish' => $startSlotTime->clone()->addMinutes(15)->format('H:i'),
+            'name' => $schedule->employeeName,
+            'id' => $schedule->employeeId,
+            'scheduleId' => $schedule->scheduleId,
+        ];
     }
 
     /**
@@ -132,12 +150,12 @@ final class VetScheduleService
      *
      * @return array array with available slots of time of all vets
      */
-    public function mergeAllSchedules($schedules)
+    public function mergeAllSchedules(array $schedules)
     {
         $availableSchedule = [];
-        foreach ($schedules as $i => $schedule) {
+        foreach ($schedules as $index => $schedule) {
             $intervals = $this->getVetsAvailableIntervals($schedule);
-            $availableSchedule = array_merge($availableSchedule, $intervals);
+            $availableSchedule = [...$availableSchedule, ...$intervals];
         }
 
         return $availableSchedule;

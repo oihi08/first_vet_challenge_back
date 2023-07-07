@@ -84,4 +84,18 @@ class VetScheduleServiceTest extends TestCase
         $response = $service->isInBreak($startSlot, $endSlot->addMinutes(15), $schedules[0]->startDate, $breaks);
         $this->assertFalse($response);
     }
+
+    /**
+     * Unit test for createIntervalData function.
+     *
+     * @return object object with necessary information for the inverval
+     */
+    public function testCreateIntervalData(): void
+    {
+        $schedules = ScheduleMock::getScheduleMock();
+        $service = new VetScheduleService();
+        $startSlot = Carbon::createFromFormat('Y-m-d H:i:s', $schedules[0]->startDate.'  07:00:00');
+        $response = $service->createIntervalData($startSlot, $schedules[0]);
+        $this->assertEquals($response->name, $schedules[0]->employeeName);
+    }
 }

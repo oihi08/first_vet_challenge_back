@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Services\VetScheduleService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware(['cors'])->group(function () {
+    Route::get('/schedule', function () {
+        $VetScheduleService = new VetScheduleService();
+        $result = $VetScheduleService->mergeAllSchedules(config('constants.schedule'));
+
+        return response()->json($result, 200);
+    });
+}
+);
