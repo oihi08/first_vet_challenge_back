@@ -58,8 +58,8 @@ This is the backend code of FirstVet's technical challenge, written in PHP with 
 ## Technical Challenge Notes
 This list provides an overview of the files modified for the technical challenge and their respective purposes.
 
-1. app/Services/VetScheduleService.php -> This file contains all the service functions for retrieving the best solution..
-2. config/constants.php -> A mock for rendering data has been created in this file. It is the same as in the case.
-3. routes/api.php -> The API for rendering data to the frontend can be found in this file.
-4. tests/Mocks/ScheduleMock.php -> This file includes a mock specifically created for the tests.
-5. tests/Unit/app/Services/VetScheduleServiceTests.php -> All the tests related to the service functions are written in this file.
+1. **app/Services/VetScheduleService.php** -> This file contains all the service functions for retrieving the best solution..
+2. **config/constants.php** -> A mock for rendering data has been created in this file. It is the same as in the case.
+3. **routes/api.php** -> The API for rendering data to the frontend can be found in this file.
+4. **tests/Mocks/ScheduleMock.php** -> This file includes a mock specifically created for the tests.
+5. **tests/Unit/app/Services/VetScheduleServiceTests.php** -> All the tests related to the service functions are written in this file.
