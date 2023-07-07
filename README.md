@@ -8,6 +8,7 @@ This is the backend code of FirstVet's technical challenge, written in PHP with 
 - [Usage](#usage)
 - [Configuration](#configuration)
 
+
 ## Installation
  1. Clone the repository.
    ```sh
@@ -19,9 +20,12 @@ This is the backend code of FirstVet's technical challenge, written in PHP with 
    ```
 3. Create a copy of the .env.example file and rename it to .env.
 
-## usage
+
+## Usage
 1. Start the development server.
   ```sh
    php artisan serve
    ```
-## configuration
+
+
+## Configuration
