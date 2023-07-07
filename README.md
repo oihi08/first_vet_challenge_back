@@ -8,7 +8,7 @@ This is the backend code of FirstVet's technical challenge, written in PHP with 
 - [Installation](#installation)
 - [Usage](#usage)
 - [Tests](#tests)
-- [Technical Challenge Notes](#notes)
+- [Technical Challenge Notes](#technical-challenge-notes)
 
 
 ## Prerequisites
