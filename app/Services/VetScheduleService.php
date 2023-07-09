@@ -62,14 +62,14 @@ final class VetScheduleService
     /**
      * Return true or false based on an slot of time is inside a break slot.
      *
-     * @param string $startSlot   the start of time period
-     * @param string $endSlot     the end of time period
+     * @param object $startSlot   the start of time period
+     * @param object $endSlot     the end of time period
      * @param string $currentDate date of the time period
      * @param array  $breaks      array of break slots
      *
      * @return bool true if the time slot is inside a break slot, otherwise false
      */
-    public function isInBreak($startSlot, $endSlot, $currentDate, array $breaks)
+    public function isInBreak(object $startSlot, object $endSlot, string $currentDate, array $breaks)
     {
         foreach ($breaks as $break) {
             $startbreakSlot = Carbon::createFromFormat('Y-m-d H:i', $currentDate.' '.$break['startBreak']);
