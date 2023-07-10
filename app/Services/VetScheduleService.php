@@ -153,7 +153,7 @@ final class VetScheduleService
     public function mergeAllSchedules(array $schedules)
     {
         $availableSchedule = [];
-        foreach ($schedules as $index => $schedule) {
+        foreach ($schedules as $schedule) {
             $intervals = $this->getVetsAvailableIntervals($schedule);
             $availableSchedule = [...$availableSchedule, ...$intervals];
         }
