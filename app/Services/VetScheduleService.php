@@ -13,7 +13,7 @@ final class VetScheduleService
      *
      * @return Carbon the rounded time
      */
-    public function roundTimeToNextQuarter($time)
+    public function roundTimeToNextQuarter(Carbon $time)
     {
         $minutes = $time->minute;
         $roundedMinutes = ceil($minutes / 15) * 15;
